@@ -16,7 +16,13 @@
     .table th {
         background-color: #f8f9fa;
     }
+    .chart-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+    }
 </style>
+
 <h1>Отчёты</h1>
 
 <div class="mb-4">
@@ -43,14 +49,27 @@
             </select>
         </div>
 
-        <!-- Кнопка для генерации отчёта -->
+        <!-- Выбор диапазона дат -->
+        <div class="mb-3">
+            <label for="start_date" class="form-label">Начальная дата:</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date if start_date else '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="end_date" class="form-label">Конечная дата:</label>
+            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date if end_date else '' }}" required>
+        </div>
+
+        <!-- Кнопки -->
         <button type="submit" class="btn btn-primary mb-3">Сгенерировать отчёт</button>
+        {% if selected_class and selected_subject and student_data %}
+            <button type="submit" name="export_pdf" class="btn btn-secondary mb-3">Экспортировать в PDF</button>
+        {% endif %}
     </form>
 </div>
 
-<!-- Если класс и предмет выбраны, показываем отчёт -->
+<!-- Отображение отчёта -->
 {% if selected_class and selected_subject %}
-    <h2>Отчёт по классу {{ selected_class.name }} ({{ selected_subject.name }})</h2>
+    <h2>Отчёт по классу {{ selected_class.name }} ({{ selected_subject.name }}) с {{ start_date }} по {{ end_date }}</h2>
     {% if student_data %}
         <table class="table table-hover">
             <thead>
@@ -84,8 +103,65 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- График распределения оценок -->
+        <div class="chart-container">
+            <canvas id="gradesChart"></canvas>
+        </div>
+
+        <!-- График динамики посещаемости -->
+        <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
+        </div>
+
+        <!-- Подключение Chart.js и скрипт -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></npm/chart.js@3.9.1/dist/chart.min.js"></script>
+        <script>
+            // Данные для графика оценок
+            const gradesData = {
+                labels: {{ student_data | map(attribute='full_name') | list | tojson }},
+                datasets: [{
+                    label: 'Средняя оценка',
+                    data: {{ student_data | map(attribute='average_grade') | list | replace('None', 'null') | safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Данные для графика посещаемости
+            const attendanceData = {
+                labels: {{ student_data | map(attribute='full_name') | list | tojson }},
+                datasets: [{
+                    label: 'Посещаемость (%)',
+                    data: {{ student_data | map(attribute='attendance_percentage') | list | tojson }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Создание графиков
+            new Chart(document.getElementById('gradesChart'), {
+                type: 'bar',
+                data: gradesData,
+                options: {
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: true } }
+                }
+            });
+
+            new Chart(document.getElementById('attendanceChart'), {
+                type: 'bar',
+                data: attendanceData,
+                options: {
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { display: true } }
+                }
+            });
+        </script>
     {% else %}
-        <p>Нет данных для отображения. Убедитесь, что у учеников есть записи о посещаемости или оценках.</p>
+        <p>Нет данных для отображения. Убедитесь, что у учеников есть записи о посещаемости или оценках в выбранном диапазоне дат.</p>
     {% endif %}
 {% endif %}
 {% endblock %}

@@ -1,6 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from flask import send_file
+import io
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///webflask.db'
@@ -307,36 +314,40 @@ def reports():
         try:
             class_id = request.form.get('class_id')
             subject_id = request.form.get('subject_id')
+            start_date = request.form.get('start_date')
+            end_date = request.form.get('end_date')
 
-            if not class_id or not subject_id:
-                flash('Пожалуйста, выберите класс и предмет.', 'danger')
+            if not class_id or not subject_id or not start_date or not end_date:
+                flash('Пожалуйста, выберите класс, предмет и диапазон дат.', 'danger')
                 return redirect(url_for('reports'))
 
             selected_class = Class.query.get_or_404(class_id)
             selected_subject = Subject.query.get_or_404(subject_id)
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
             students = sorted(selected_class.students, key=lambda student: student.full_name)
 
-            # Собираем данные для отчёта
+            # Собираем данные для отчёта с фильтром по датам
             for student in students:
-                # Получаем все записи о посещаемости для ученика и предмета
-                attendance_records = Attendance.query.filter_by(
-                    student_id=student.id,
-                    subject_id=subject_id
+                # Посещаемость
+                attendance_records = Attendance.query.filter(
+                    Attendance.student_id == student.id,
+                    Attendance.subject_id == subject_id,
+                    Attendance.date >= start_date,
+                    Attendance.date <= end_date
                 ).all()
-
-                # Вычисляем процент посещаемости
                 total_days = len(attendance_records)
                 present_days = len([record for record in attendance_records if record.present])
                 attendance_percentage = (present_days / total_days * 100) if total_days > 0 else 0
 
-                # Получаем оценки ученика по предмету
-                grades = Grade.query.filter_by(
-                    student_id=student.id,
-                    subject_id=subject_id
+                # Оценки
+                grades = Grade.query.filter(
+                    Grade.student_id == student.id,
+                    Grade.subject_id == subject_id,
+                    Grade.date >= start_date,
+                    Grade.date <= end_date
                 ).all()
                 grade_values = [grade.value for grade in grades]
-
-                # Вычисляем среднюю оценку
                 average_grade = sum(grade_values) / len(grade_values) if grade_values else None
 
                 # Формируем данные для отображения
@@ -347,6 +358,45 @@ def reports():
                     'average_grade': round(average_grade, 2) if average_grade else None
                 })
 
+            # Экспорт в PDF, если запрошено
+            if 'export_pdf' in request.form:
+                output = io.BytesIO()
+                doc = SimpleDocTemplate(output, pagesize=letter)
+                styles = getSampleStyleSheet()
+                elements = []
+
+                title = Paragraph(f"Отчёт по классу {selected_class.name} ({selected_subject.name}) с {start_date} по {end_date}", styles['Title'])
+                elements.append(title)
+
+                table_data = [['ФИО', 'Посещаемость (%)', 'Оценки', 'Средняя оценка']]
+                for student in student_data:
+                    table_data.append([
+                        student['full_name'],
+                        f"{student['attendance_percentage']}%",
+                        ', '.join(map(str, student['grades'])) if student['grades'] else 'Нет оценок',
+                        str(student['average_grade']) if student['average_grade'] else 'Нет оценок'
+                    ])
+
+                table = Table(table_data)
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 14),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 1), (-1, -1), 12),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                ]))
+                elements.append(table)
+
+                doc.build(elements)
+                output.seek(0)
+                return send_file(output, as_attachment=True, download_name=f"report_{selected_class.name}_{selected_subject.name}.pdf", mimetype='application/pdf')
+
         except Exception as e:
             flash(f'Ошибка: {str(e)}', 'error')
 
@@ -356,7 +406,9 @@ def reports():
         subjects=subjects,
         selected_class=selected_class,
         selected_subject=selected_subject,
-        student_data=student_data if student_data else None
+        student_data=student_data if student_data else None,
+        start_date=start_date.strftime('%Y-%m-%d') if 'start_date' in locals() else '',
+        end_date=end_date.strftime('%Y-%m-%d') if 'end_date' in locals() else ''
     )
 
 @app.route('/forecast')

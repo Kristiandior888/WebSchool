@@ -10,7 +10,7 @@ import io
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///webflask.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///schoolroom.db'
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -196,7 +196,10 @@ def attendance():
 
             if 'submit_attendance' in request.form:
                 for student in students:
+                    # Чекбокс передаётся в форме только если он отмечен, иначе его нет в request.form
                     present = f'present_{student.id}' in request.form
+                    print(f"Student {student.full_name} (ID: {student.id}), Present: {present}")  # Отладка
+
                     attendance_record = Attendance.query.filter_by(
                         student_id=student.id,
                         subject_id=subject_id,
@@ -204,8 +207,11 @@ def attendance():
                     ).first()
 
                     if attendance_record:
+                        # Если запись существует, обновляем её
                         attendance_record.present = present
+                        print(f"Updated attendance for {student.full_name}: Present = {present}")
                     else:
+                        # Если записи нет, создаём новую
                         new_attendance = Attendance(
                             date=date,
                             present=present,
@@ -213,14 +219,22 @@ def attendance():
                             subject_id=subject_id
                         )
                         db.session.add(new_attendance)
+                        print(f"Added new attendance for {student.full_name}: Present = {present}")
 
+                # Фиксируем изменения в базе данных
                 db.session.commit()
+
+                # Проверяем, что данные действительно сохранены
+                saved_records = Attendance.query.filter_by(subject_id=subject_id, date=date).all()
+                print(f"Saved attendance records: {[(rec.student_id, rec.present) for rec in saved_records]}")
+
                 flash('Посещаемость успешно сохранена.', 'success')
                 return redirect(url_for('attendance'))
 
         except Exception as e:
             db.session.rollback()
             flash(f'Ошибка: {str(e)}', 'error')
+            print(f"Error: {str(e)}")  # Отладка
 
     return render_template(
         'attendance.html',
@@ -230,7 +244,7 @@ def attendance():
         selected_subject=selected_subject,
         selected_date=selected_date,
         students=students,
-        attendance_records=attendance_records  # Передаём записи в шаблон
+        attendance_records=attendance_records
     )
 
 @app.route('/grades', methods=['GET', 'POST'])
@@ -242,6 +256,7 @@ def grades():
     selected_subject = None
     selected_date = None
     students = []
+    grade_records = {}  # Словарь для хранения существующих оценок
 
     if request.method == 'POST':
         try:
@@ -257,6 +272,15 @@ def grades():
             selected_class = Class.query.get_or_404(class_id)
             selected_subject = Subject.query.get_or_404(subject_id)
             students = sorted(selected_class.students, key=lambda student: student.full_name)
+
+            # Получаем существующие оценки для выбранной даты, класса и предмета
+            for student in students:
+                grade_record = Grade.query.filter_by(
+                    student_id=student.id,
+                    subject_id=subject_id,
+                    date=date
+                ).first()
+                grade_records[student.id] = grade_record
 
             if 'submit_grades' in request.form:
                 for student in students:
@@ -298,7 +322,8 @@ def grades():
         selected_class=selected_class,
         selected_subject=selected_subject,
         selected_date=selected_date,
-        students=students
+        students=students,
+        grade_records=grade_records  # Передаём существующие оценки
     )
 
 @app.route('/reports', methods=['GET', 'POST'])
@@ -337,8 +362,11 @@ def reports():
                     Attendance.date <= end_date
                 ).all()
                 total_days = len(attendance_records)
-                present_days = len([record for record in attendance_records if record.present])
+                present_days = sum(1 for record in attendance_records if record.present)  # Подсчитываем дни с present=True
                 attendance_percentage = (present_days / total_days * 100) if total_days > 0 else 0
+
+                # Отладочный вывод
+                print(f"Student: {student.full_name}, Total Days: {total_days}, Present Days: {present_days}, Percentage: {attendance_percentage}%")
 
                 # Оценки
                 grades = Grade.query.filter(
@@ -355,7 +383,9 @@ def reports():
                     'full_name': student.full_name,
                     'attendance_percentage': round(attendance_percentage, 2),
                     'grades': grade_values,
-                    'average_grade': round(average_grade, 2) if average_grade else None
+                    'average_grade': round(average_grade, 2) if average_grade else None,
+                    'total_days': total_days,  # Для отладки
+                    'present_days': present_days  # Для отладки
                 })
 
             # Экспорт в PDF, если запрошено
@@ -364,6 +394,15 @@ def reports():
                 doc = SimpleDocTemplate(output, pagesize=letter)
                 styles = getSampleStyleSheet()
                 elements = []
+
+                # Регистрация шрифта с поддержкой кириллицы
+                from reportlab.pdfbase import pdfmetrics
+                from reportlab.pdfbase.ttfonts import TTFont
+                pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))  # Убедитесь, что шрифт доступен
+
+                # Изменяем стиль для поддержки кириллицы
+                styles['Title'].fontName = 'DejaVuSans'
+                styles['Normal'].fontName = 'DejaVuSans'
 
                 title = Paragraph(f"Отчёт по классу {selected_class.name} ({selected_subject.name}) с {start_date} по {end_date}", styles['Title'])
                 elements.append(title)
@@ -382,12 +421,11 @@ def reports():
                     ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTNAME', (0, 0), (-1, -1), 'DejaVuSans'),  # Используем шрифт с кириллицей
                     ('FONTSIZE', (0, 0), (-1, 0), 14),
                     ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
                     ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                     ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
-                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
                     ('FONTSIZE', (0, 1), (-1, -1), 12),
                     ('GRID', (0, 0), (-1, -1), 1, colors.black)
                 ]))
@@ -434,8 +472,6 @@ def add_class():
             db.session.rollback()
             flash(f'Ошибка: {str(e)}', 'error')
     return render_template('class_form.html')
-
-
 
 # Инициализация базы данных
 with app.app_context():

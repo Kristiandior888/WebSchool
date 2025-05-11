@@ -47,7 +47,7 @@
 
         <!-- Если класс и предмет выбраны, показываем список учеников -->
         {% if students %}
-            <h2>Ученики класса {{ selected_class.name }} ({{ selected_subject.name }})</h2>
+            <h2>Ученики класса {{ selected_class.name }} ({{ selected_subject.name }}) за {{ selected_date }}</h2>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -62,10 +62,10 @@
                             <td>
                                 <select name="grade_{{ student.id }}" class="form-select">
                                     <option value="">-- Выберите оценку --</option>
-                                    <option value="2" {% if student.grades and student.grades[-1].value == 2 %}selected{% endif %}>2</option>
-                                    <option value="3" {% if student.grades and student.grades[-1].value == 3 %}selected{% endif %}>3</option>
-                                    <option value="4" {% if student.grades and student.grades[-1].value == 4 %}selected{% endif %}>4</option>
-                                    <option value="5" {% if student.grades and student.grades[-1].value == 5 %}selected{% endif %}>5</option>
+                                    <option value="2" {% if grade_records[student.id] and grade_records[student.id].value == 2 %}selected{% endif %}>2</option>
+                                    <option value="3" {% if grade_records[student.id] and grade_records[student.id].value == 3 %}selected{% endif %}>3</option>
+                                    <option value="4" {% if grade_records[student.id] and grade_records[student.id].value == 4 %}selected{% endif %}>4</option>
+                                    <option value="5" {% if grade_records[student.id] and grade_records[student.id].value == 5 %}selected{% endif %}>5</option>
                                 </select>
                             </td>
                         </tr>

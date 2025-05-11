@@ -161,6 +161,7 @@ def attendance():
     selected_subject = None
     selected_date = None
     students = []
+    attendance_records = {}  # Словарь для хранения существующих записей
 
     if request.method == 'POST':
         try:
@@ -176,6 +177,15 @@ def attendance():
             selected_class = Class.query.get_or_404(class_id)
             selected_subject = Subject.query.get_or_404(subject_id)
             students = sorted(selected_class.students, key=lambda student: student.full_name)
+
+            # Получаем существующие записи посещаемости для выбранной даты, класса и предмета
+            for student in students:
+                attendance_record = Attendance.query.filter_by(
+                    student_id=student.id,
+                    subject_id=subject_id,
+                    date=date
+                ).first()
+                attendance_records[student.id] = attendance_record
 
             if 'submit_attendance' in request.form:
                 for student in students:
@@ -212,7 +222,8 @@ def attendance():
         selected_class=selected_class,
         selected_subject=selected_subject,
         selected_date=selected_date,
-        students=students
+        students=students,
+        attendance_records=attendance_records  # Передаём записи в шаблон
     )
 
 @app.route('/grades', methods=['GET', 'POST'])
@@ -283,10 +294,70 @@ def grades():
         students=students
     )
 
-@app.route('/reports')
+@app.route('/reports', methods=['GET', 'POST'])
 @login_required
 def reports():
-    return render_template('reports.html')
+    classes = Class.query.all()
+    subjects = Subject.query.all()
+    selected_class = None
+    selected_subject = None
+    student_data = []
+
+    if request.method == 'POST':
+        try:
+            class_id = request.form.get('class_id')
+            subject_id = request.form.get('subject_id')
+
+            if not class_id or not subject_id:
+                flash('Пожалуйста, выберите класс и предмет.', 'danger')
+                return redirect(url_for('reports'))
+
+            selected_class = Class.query.get_or_404(class_id)
+            selected_subject = Subject.query.get_or_404(subject_id)
+            students = sorted(selected_class.students, key=lambda student: student.full_name)
+
+            # Собираем данные для отчёта
+            for student in students:
+                # Получаем все записи о посещаемости для ученика и предмета
+                attendance_records = Attendance.query.filter_by(
+                    student_id=student.id,
+                    subject_id=subject_id
+                ).all()
+
+                # Вычисляем процент посещаемости
+                total_days = len(attendance_records)
+                present_days = len([record for record in attendance_records if record.present])
+                attendance_percentage = (present_days / total_days * 100) if total_days > 0 else 0
+
+                # Получаем оценки ученика по предмету
+                grades = Grade.query.filter_by(
+                    student_id=student.id,
+                    subject_id=subject_id
+                ).all()
+                grade_values = [grade.value for grade in grades]
+
+                # Вычисляем среднюю оценку
+                average_grade = sum(grade_values) / len(grade_values) if grade_values else None
+
+                # Формируем данные для отображения
+                student_data.append({
+                    'full_name': student.full_name,
+                    'attendance_percentage': round(attendance_percentage, 2),
+                    'grades': grade_values,
+                    'average_grade': round(average_grade, 2) if average_grade else None
+                })
+
+        except Exception as e:
+            flash(f'Ошибка: {str(e)}', 'error')
+
+    return render_template(
+        'reports.html',
+        classes=classes,
+        subjects=subjects,
+        selected_class=selected_class,
+        selected_subject=selected_subject,
+        student_data=student_data if student_data else None
+    )
 
 @app.route('/forecast')
 @login_required

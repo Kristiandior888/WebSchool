@@ -60,7 +60,8 @@
                         <tr>
                             <td>{{ student.full_name }}</td>
                             <td>
-                                <input type="checkbox" name="present_{{ student.id }}" {% if student.attendances and student.attendances[-1].present %}checked{% endif %}>
+                                <input type="checkbox" name="present_{{ student.id }}"
+                                    {% if attendance_records[student.id] and attendance_records[student.id].present %}checked{% endif %}>
                             </td>
                         </tr>
                     {% endfor %}

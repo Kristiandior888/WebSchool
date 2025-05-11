@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Добавить класс{% endblock %}
+{% block body %}
+<h1>Добавить класс</h1>
+<form method="post">
+    <div class="mb-3">
+        <label for="name" class="form-label">Название класса:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+</form>
+<a href="{{ url_for('class_list') }}" class="btn btn-secondary mt-3">Назад к списку классов</a>
+{% endblock %}

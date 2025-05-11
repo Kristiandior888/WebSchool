@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Список классов{% endblock %}
+{% block body %}
+<h1>Список классов</h1>
+<a href="{{ url_for('add_class') }}" class="btn btn-primary mb-3">Добавить класс</a>
+<ul class="list-group">
+    {% for class in classes %}
+        <li class="list-group-item">
+            <a href="{{ url_for('class_detail', class_id=class.id) }}">{{ class.name }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

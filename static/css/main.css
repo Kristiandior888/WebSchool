@@ -1,0 +1,96 @@
+/* HEADER */
+
+
+.header__img{
+    height: 58px;
+    width: 58px;
+}
+
+header{
+    position: sticky;
+    top: 0;
+    padding: 25px;
+    z-index: 1000;
+    background: #fff;
+    -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Таблицы */
+.table-school {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: #fff;
+}
+
+/* Формы */
+.school-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+h1, h3 {
+    font-weight: 600;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.5rem 0;
+}
+
+.student-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+/* Стили для таблицы с учениками */
+.student-table th:first-child {
+    width: 70%; /* Увеличиваем ширину колонки с ФИО */
+}
+
+.student-table th:last-child {
+    width: 30%; /* Уменьшаем ширину колонки с кнопкой */
+}
+
+.student-table td {
+    vertical-align: middle; /* Выравнивание содержимого по центру по вертикали */
+}
+
+/* Стили для кнопки "Удалить" */
+.muted-delete-btn {
+    background-color: #e57373; /* Приглушённый красный цвет */
+    border-color: #e57373; /* Соответствующий цвет границы */
+}
+
+.muted-delete-btn:hover {
+    background-color: #ef5350; /* Чуть ярче при наведении */
+    border-color: #ef5350;
+}
+
+.table td input[type="checkbox"] {
+    transform: scale(1.5); /* Увеличиваем размер чекбокса */
+    margin-left: 10px;
+}
+.table th, .table td {
+    vertical-align: middle;
+
+}

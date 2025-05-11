@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Добавить ученика{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm p-4" style="max-width: 500px; width: 100%;">
+        <h1 class="text-center mb-4">Добавить ученика</h1>
+        <form method="post">
+            <!-- Поле для ФИО -->
+            <div class="mb-3">
+                <label for="full_name" class="form-label">ФИО ученика:</label>
+                <input type="text" class="form-control form-control-lg" id="full_name" name="full_name" required>
+            </div>
+
+            <!-- Выбор класса -->
+            <div class="mb-3">
+                <label for="class_id" class="form-label">Класс:</label>
+                <select class="form-control" id="class_id" name="class_id" required>
+                    <option value="">-- Выберите класс --</option>
+                    {% for class_ in classes %}
+                        <option value="{{ class_.id }}">{{ class_.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Кнопка отправки -->
+            <button type="submit" class="btn btn-primary w-100">Добавить</button>
+        </form>
+        <a href="{{ url_for('class_list') }}" class="btn btn-secondary w-100 mt-3">Назад к списку классов</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Добавить класс{% endblock %}
 {% block body %}
+<style>
+    body {
+        background-image: url('{{ url_for('static', filename='img/background7.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+</style>
 <h1>Добавить класс</h1>
+
 <form method="post">
     <div class="mb-3">
         <label for="name" class="form-label">Название класса:</label>

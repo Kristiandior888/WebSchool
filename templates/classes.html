@@ -1,13 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}Список классов{% endblock %}
 {% block body %}
+<style>
+    body {
+        background-image: url('{{ url_for('static', filename='img/background7.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+</style>
 <h1>Список классов</h1>
 <a href="{{ url_for('add_class') }}" class="btn btn-primary mb-3">Добавить класс</a>
-<ul class="list-group">
+<div class="d-flex flex-wrap gap-3">
     {% for class in classes %}
-        <li class="list-group-item">
-            <a href="{{ url_for('class_detail', class_id=class.id) }}">{{ class.name }}</a>
-        </li>
+        <a href="{{ url_for('class_detail', class_id=class.id) }}" class="btn btn-primary btn-lg custom-class-btn" style="min-width: 150px;">
+            {{ class.name }}
+        </a>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}
+Показать в боковой панели

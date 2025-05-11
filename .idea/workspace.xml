@@ -5,12 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2dc1ab25-4e70-4bdf-a11c-dc317fc0d06d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/WebSchool.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background12.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background7.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background8.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/background9.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/attendance.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/attendance.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/class_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/class_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/class_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/class_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/classes.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/classes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/grades.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/grades.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/student_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/student_form.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,12 +52,51 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Notification.DisplayName-DoNotAsk-Packaging": "Python packaging",
+    "Notification.DoNotAsk-Packaging": "true",
+    "Python.app.executor": "Run",
+    "Python.init_db.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Кристина/PycharmProgramms/WebSchool"
+    "last_opened_file_path": "C:/Users/Кристина/PycharmProgramms/WebSchool/static/img"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Кристина\PycharmProgramms\WebSchool\static\img" />
+      <recent name="C:\Users\Кристина\PycharmProgramms\WebSchool" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="WebSchool" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.app" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

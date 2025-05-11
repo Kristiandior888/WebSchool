@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Класс {{ class_.name }}{% endblock %}
 {% block body %}
+<style>
+    body {
+        background-image: url('{{ url_for('static', filename='img/background7.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+</style>
 <h1>Класс {{ class_.name }}</h1>
 <h2>Ученики</h2>
 {% if students %}

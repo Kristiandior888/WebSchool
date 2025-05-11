@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Посещаемость{% endblock %}
 {% block body %}
+<style>
+    body {
+        background-image: url('{{ url_for('static', filename='img/background8.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+</style>
 <h1>Учёт посещаемости</h1>
 
 <div class="mb-4">

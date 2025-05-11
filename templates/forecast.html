@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Прогноз{% endblock %}
 {% block body %}
+<style>
+    body {
+        background-image: url('{{ url_for('static', filename='img/background12.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+</style>
 <h1>Прогноз</h1>
 <p>Здесь будет прогноз.</p>
 {% endblock %}

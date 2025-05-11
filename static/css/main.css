@@ -1,6 +1,5 @@
 /* HEADER */
 
-
 .header__img{
     height: 58px;
     width: 58px;
@@ -32,12 +31,10 @@ header{
     border-radius: 5px;
 }
 
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
 }
-
 
 .card {
     transition: transform 0.2s;
@@ -92,5 +89,18 @@ h1, h3 {
 }
 .table th, .table td {
     vertical-align: middle;
+}
 
+/* Стили для кастомных кнопок классов */
+.custom-class-btn {
+    background-color: #7d7aff; /* Сиреневый фон */
+    border-color: #ff7077; /* Розовая обводка */
+    transition: all 0.3s ease; /* Плавная анимация */
+    box-shadow: 0 4px 8px rgba(255, 0, 208, 0.8); /* Пурпурная тень */
+}
+
+.custom-class-btn:hover {
+    background-color: #0056b3; /* Темно-синий при наведении */
+    transform: translateY(-2px); /* Лёгкое поднятие */
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.4); /* Усиленная тень */
 }

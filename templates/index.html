@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Подключаем Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <!-- Пользовательский CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('{{ url_for('static', filename='img/background.jpg') }}');
+        }
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+        h1, h3 {
+            font-weight: 600;
+        }
+        .list-group-item {
+            border: none;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
+        .list-group-item img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+    </style>
+    <title>Гимназия № 1</title>
+</head>
+<body>
+<div class="container my-5">
+    <!-- Главный заголовок -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Добро пожаловать на сайт Гимназии №1</h1>
+        <p class="lead text-muted">
+            Сайт предназначен только для учителей. Войдите или зарегистрируйтесь, чтобы управлять учебным процессом.
+        </p>
+    </div>
+
+    <!-- Кнопки входа и регистрации -->
+    <div class="text-center mb-5">
+        <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg me-3">Вход</a>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Регистрация</a>
+    </div>
+
+    <!-- Карточка с описанием для учителей -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h3 class="card-title text-primary">Для учителей</h3>
+                    <p class="card-text">
+                        После входа вы сможете:
+                    </p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <img src="{{ url_for('static', filename='img/pencil.png') }}" alt="pencil icon">
+                            Добавлять посещаемость учеников
+                        </li>
+                        <li class="list-group-item">
+                            <img src="{{ url_for('static', filename='img/assigment.png') }}" alt="pencil icon">
+                            Выставлять оценки
+                        </li>
+                        <li class="list-group-item">
+                            <img src="{{ url_for('static', filename='img/statistic.png') }}" alt="pencil icon">
+                            Формировать отчёты
+                        </li>
+                        <li class="list-group-item">
+                            <img src="{{ url_for('static', filename='img/user.png') }}" alt="pencil icon">
+                            Прогнозировать успеваемость
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Подключаем Bootstrap JS для интерактивных компонентов -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
